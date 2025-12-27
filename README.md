@@ -1,6 +1,8 @@
 <div align="center">
 
-# asdf-sourcery [![Build](https://github.com/younke/asdf-sourcery/actions/workflows/build.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/build.yml) [![Lint](https://github.com/younke/asdf-sourcery/actions/workflows/lint.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/lint.yml)
+# asdf-sourcery 
+
+[![Build](https://github.com/younke/asdf-sourcery/actions/workflows/build.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/build.yml) [![Lint](https://github.com/younke/asdf-sourcery/actions/workflows/lint.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/lint.yml) [![Mise](https://github.com/younke/asdf-sourcery/actions/workflows/test-mise.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/test-mise.yml)
 
 [sourcery](https://krzysztofzablocki.github.io/Sourcery/) plugin for the [asdf version manager](https://asdf-vm.com).
 
