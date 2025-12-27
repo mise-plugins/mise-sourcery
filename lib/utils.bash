@@ -6,6 +6,11 @@ GH_REPO="https://github.com/krzysztofzablocki/Sourcery"
 TOOL_NAME="sourcery"
 TOOL_TEST="sourcery --version"
 
+fail() {
+	echo -e "asdf-$TOOL_NAME: $*"
+	exit 1
+}
+
 # Detect platform and return download details
 # Returns: "macos" | "ubuntu-22.04" or fails
 get_platform() {
@@ -32,11 +37,6 @@ get_platform() {
 			fail "Unsupported OS: $kernel"
 			;;
 	esac
-}
-
-fail() {
-	echo -e "asdf-$TOOL_NAME: $*"
-	exit 1
 }
 
 curl_opts=(-fsSL)
@@ -71,20 +71,28 @@ ignore_invalid_versions() {
 # Pattern: finds asset matching *ubuntu*22.04*{arch}*.tar.xz
 get_ubuntu_asset_url() {
 	local version="$1"
-	local api_url asset_url arch
+	local api_url asset_url arch api_response
 
 	arch="$(uname -m)"
 	api_url="https://api.github.com/repos/krzysztofzablocki/Sourcery/releases/tags/${version}"
 
-	asset_url=$(curl "${curl_opts[@]}" "$api_url" 2>/dev/null | \
-		grep -o "\"browser_download_url\": *\"[^\"]*ubuntu[^\"]*22\\.04[^\"]*${arch}[^\"]*\\.tar\\.xz\"" | \
+	echo "Fetching release info for version $version (arch: $arch)..." >&2
+
+	# Fetch API response (without -f to see errors)
+	api_response=$(curl -sL "$api_url" 2>&1)
+
+	# Extract the asset URL
+	asset_url=$(echo "$api_response" | \
+		grep -o '"browser_download_url": *"[^"]*ubuntu[^"]*22\.04[^"]*'"${arch}"'[^"]*\.tar\.xz"' | \
 		head -1 | \
 		sed 's/"browser_download_url": *"\([^"]*\)"/\1/')
 
 	if [ -z "$asset_url" ]; then
+		echo "API response (first 500 chars): ${api_response:0:500}" >&2
 		fail "Could not find Ubuntu 22.04 $arch asset for version $version"
 	fi
 
+	echo "Found asset URL: $asset_url" >&2
 	echo "$asset_url"
 }
 
