@@ -2,7 +2,9 @@
 
 # asdf-sourcery 
 
-[![Build](https://github.com/younke/asdf-sourcery/actions/workflows/build.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/build.yml) [![Lint](https://github.com/younke/asdf-sourcery/actions/workflows/lint.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/lint.yml) [![Mise](https://github.com/younke/asdf-sourcery/actions/workflows/test-mise.yml/badge.svg)](https://github.com/younke/asdf-sourcery/actions/workflows/test-mise.yml)
+[![asdf](https://github.com/mise-plugins/mise-sourcery/actions/workflows/build.yml/badge.svg)](https://github.com/mise-plugins/mise-sourcery/actions/workflows/build.yml)
+[![mise](https://github.com/mise-plugins/mise-sourcery/actions/workflows/test-mise.yml/badge.svg)](https://github.com/mise-plugins/mise-sourcery/actions/workflows/test-mise.yml)
+[![lint](https://github.com/mise-plugins/mise-sourcery/actions/workflows/lint.yml/badge.svg)](https://github.com/mise-plugins/mise-sourcery/actions/workflows/lint.yml) 
 
 [sourcery](https://krzysztofzablocki.github.io/Sourcery/) plugin for the [asdf version manager](https://asdf-vm.com).
 
@@ -26,7 +28,7 @@ Plugin:
 ```shell
 asdf plugin add sourcery
 # or
-asdf plugin add sourcery https://github.com/younke/asdf-sourcery.git
+asdf plugin add sourcery https://github.com/mise-plugins/mise-sourcery.git
 ```
 
 sourcery:
@@ -52,7 +54,7 @@ install & manage versions.
 
 Contributions of any kind welcome! See the [contributing guide](contributing.md).
 
-[Thanks goes to these contributors](https://github.com/younke/asdf-sourcery/graphs/contributors)!
+[Thanks goes to these contributors](https://github.com/mise-plugins/mise-sourcery/graphs/contributors)!
 
 # License
 

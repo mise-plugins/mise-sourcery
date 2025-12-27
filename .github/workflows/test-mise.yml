@@ -36,4 +36,4 @@ jobs:
         with:
           install: false
 
-      - run: mise exec asdf:https://github.com/younke/asdf-sourcery@latest -- sourcery --version
+      - run: mise exec asdf:https://github.com/mise-plugins/mise-sourcery@latest -- sourcery --version
