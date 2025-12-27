@@ -131,7 +131,21 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "${ASDF_DOWNLOAD_PATH}/bin/${TOOL_NAME}" "$install_path"
+		
+		# Handle different archive structures per platform
+		local platform
+		platform="$(get_platform)"
+		
+		case "$platform" in
+			macos)
+				# macOS archive has bin/sourcery
+				cp -r "${ASDF_DOWNLOAD_PATH}/bin/${TOOL_NAME}" "$install_path"
+				;;
+			ubuntu-22.04)
+				# Ubuntu archive has sourcery at root
+				cp -r "${ASDF_DOWNLOAD_PATH}/${TOOL_NAME}" "$install_path"
+				;;
+		esac
 
 		local tool_cmd
 		tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
