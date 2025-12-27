@@ -6,6 +6,34 @@ GH_REPO="https://github.com/krzysztofzablocki/Sourcery"
 TOOL_NAME="sourcery"
 TOOL_TEST="sourcery --version"
 
+# Detect platform and return download details
+# Returns: "macos" | "ubuntu-22.04" or fails
+get_platform() {
+	local kernel
+	kernel="$(uname -s)"
+
+	case "$kernel" in
+		Darwin)
+			echo "macos"
+			;;
+		Linux)
+			# Check if Ubuntu 22.04
+			if [ -f /etc/os-release ]; then
+				# shellcheck source=/dev/null
+				source /etc/os-release
+				if [ "$ID" = "ubuntu" ] && [ "$VERSION_ID" = "22.04" ]; then
+					echo "ubuntu-22.04"
+					return
+				fi
+			fi
+			fail "Unsupported Linux distribution. Only Ubuntu 22.04 is supported."
+			;;
+		*)
+			fail "Unsupported OS: $kernel"
+			;;
+	esac
+}
+
 fail() {
 	echo -e "asdf-$TOOL_NAME: $*"
 	exit 1
@@ -39,12 +67,41 @@ ignore_invalid_versions() {
 	cut -d ' ' -f 6-
 }
 
+# Fetch Ubuntu asset URL from GitHub API
+# Pattern: finds asset matching *ubuntu*22.04*{arch}*.tar.xz
+get_ubuntu_asset_url() {
+	local version="$1"
+	local api_url asset_url arch
+
+	arch="$(uname -m)"
+	api_url="https://api.github.com/repos/krzysztofzablocki/Sourcery/releases/tags/${version}"
+
+	asset_url=$(curl "${curl_opts[@]}" "$api_url" 2>/dev/null | \
+		grep -o "\"browser_download_url\": *\"[^\"]*ubuntu[^\"]*22\\.04[^\"]*${arch}[^\"]*\\.tar\\.xz\"" | \
+		head -1 | \
+		sed 's/"browser_download_url": *"\([^"]*\)"/\1/')
+
+	if [ -z "$asset_url" ]; then
+		fail "Could not find Ubuntu 22.04 $arch asset for version $version"
+	fi
+
+	echo "$asset_url"
+}
+
 download_release() {
-	local version filename url
+	local version filename url platform
 	version="$1"
 	filename="$2"
+	platform="$(get_platform)"
 
-	url="$GH_REPO/releases/download/${version}/sourcery-${version}.zip"
+	case "$platform" in
+		macos)
+			url="$GH_REPO/releases/download/${version}/sourcery-${version}.zip"
+			;;
+		ubuntu-22.04)
+			url="$(get_ubuntu_asset_url "$version")"
+			;;
+	esac
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
