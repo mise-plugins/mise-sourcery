@@ -3,8 +3,10 @@ name: asdf
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
+  schedule:
+    - cron: 0 0 * * 5
 
 jobs:
   plugin_test:
