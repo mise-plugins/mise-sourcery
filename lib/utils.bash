@@ -18,24 +18,24 @@ get_platform() {
 	kernel="$(uname -s)"
 
 	case "$kernel" in
-		Darwin)
-			echo "macos"
-			;;
-		Linux)
-			# Check if Ubuntu 22.04
-			if [ -f /etc/os-release ]; then
-				# shellcheck source=/dev/null
-				source /etc/os-release
-				if [ "$ID" = "ubuntu" ] && [ "$VERSION_ID" = "22.04" ]; then
-					echo "ubuntu-22.04"
-					return
-				fi
+	Darwin)
+		echo "macos"
+		;;
+	Linux)
+		# Check if Ubuntu 22.04
+		if [ -f /etc/os-release ]; then
+			# shellcheck source=/dev/null
+			source /etc/os-release
+			if [ "$ID" = "ubuntu" ] && [ "$VERSION_ID" = "22.04" ]; then
+				echo "ubuntu-22.04"
+				return
 			fi
-			fail "Unsupported Linux distribution. Only Ubuntu 22.04 is supported."
-			;;
-		*)
-			fail "Unsupported OS: $kernel"
-			;;
+		fi
+		fail "Unsupported Linux distribution. Only Ubuntu 22.04 is supported."
+		;;
+	*)
+		fail "Unsupported OS: $kernel"
+		;;
 	esac
 }
 
@@ -78,9 +78,9 @@ get_ubuntu_asset_url() {
 
 	api_response=$(curl -sL "$api_url" 2>&1)
 
-	asset_url=$(echo "$api_response" | \
-		grep -o '"browser_download_url": *"[^"]*ubuntu[^"]*22\.04[^"]*'"${arch}"'[^"]*\.tar\.xz"' | \
-		head -1 | \
+	asset_url=$(echo "$api_response" |
+		grep -o '"browser_download_url": *"[^"]*ubuntu[^"]*22\.04[^"]*'"${arch}"'[^"]*\.tar\.xz"' |
+		head -1 |
 		sed 's/"browser_download_url": *"\([^"]*\)"/\1/')
 
 	if [ -z "$asset_url" ]; then
@@ -97,12 +97,12 @@ download_release() {
 	platform="$(get_platform)"
 
 	case "$platform" in
-		macos)
-			url="$GH_REPO/releases/download/${version}/sourcery-${version}.zip"
-			;;
-		ubuntu-22.04)
-			url="$(get_ubuntu_asset_url "$version")"
-			;;
+	macos)
+		url="$GH_REPO/releases/download/${version}/sourcery-${version}.zip"
+		;;
+	ubuntu-22.04)
+		url="$(get_ubuntu_asset_url "$version")"
+		;;
 	esac
 
 	echo "* Downloading $TOOL_NAME release $version..."
@@ -120,20 +120,20 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		
+
 		# Handle different archive structures per platform
 		local platform
 		platform="$(get_platform)"
-		
+
 		case "$platform" in
-			macos)
-				# macOS archive has bin/sourcery
-				cp -r "${ASDF_DOWNLOAD_PATH}/bin/${TOOL_NAME}" "$install_path"
-				;;
-			ubuntu-22.04)
-				# Ubuntu archive has sourcery at root
-				cp -r "${ASDF_DOWNLOAD_PATH}/${TOOL_NAME}" "$install_path"
-				;;
+		macos)
+			# macOS archive has bin/sourcery
+			cp -r "${ASDF_DOWNLOAD_PATH}/bin/${TOOL_NAME}" "$install_path"
+			;;
+		ubuntu-22.04)
+			# Ubuntu archive has sourcery at root
+			cp -r "${ASDF_DOWNLOAD_PATH}/${TOOL_NAME}" "$install_path"
+			;;
 		esac
 
 		local tool_cmd
