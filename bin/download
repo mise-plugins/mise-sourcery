@@ -10,10 +10,26 @@ source "${plugin_dir}/lib/utils.bash"
 
 mkdir -p "$ASDF_DOWNLOAD_PATH"
 
-release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.zip"
+platform="$(get_platform)"
+
+case "$platform" in
+macos)
+	release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.zip"
+	;;
+ubuntu-22.04)
+	release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.tar.xz"
+	;;
+esac
 
 download_release "$ASDF_INSTALL_VERSION" "$release_file"
 
-unzip "$release_file" -d "$ASDF_DOWNLOAD_PATH" || fail "Could not extract $release_file"
+case "$platform" in
+macos)
+	unzip "$release_file" -d "$ASDF_DOWNLOAD_PATH" || fail "Could not extract $release_file"
+	;;
+ubuntu-22.04)
+	tar -xf "$release_file" -C "$ASDF_DOWNLOAD_PATH" || fail "Could not extract $release_file"
+	;;
+esac
 
 rm "$release_file"
