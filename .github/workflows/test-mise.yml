@@ -1,4 +1,4 @@
-name: asdf
+name: mise
 
 on:
   push:
@@ -8,24 +8,32 @@ on:
   schedule:
     - cron: 0 0 * * 5
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
-  plugin_test:
-    name: asdf plugin test (${{ matrix.os }})
+  test:
+    name: mise test (${{ matrix.os }})
     strategy:
       matrix:
         os:
           - macos-latest
           - ubuntu-22.04
     runs-on: ${{ matrix.os }}
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
       - name: Install Swift (Ubuntu only)
         if: runner.os == 'Linux'
         uses: swift-actions/setup-swift@v2
         with:
           swift-version: "5.10"
-      - name: asdf_plugin_test
-        uses: asdf-vm/actions/plugin-test@v3
+
+      - name: Mise
+        uses: jdx/mise-action@v3
         with:
-          command: sourcery --version
-        env:
-          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          install: false
+
+      - run: mise exec asdf:https://github.com/mise-plugins/mise-sourcery@latest -- sourcery --version
