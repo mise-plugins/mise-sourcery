@@ -112,7 +112,12 @@ download_release() {
 	esac
 
 	echo "* Downloading $TOOL_NAME release $version..."
-	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+	echo "  URL: $url" >&2
+	curl -fsSL -o "$filename" "$url" || fail "Could not download $url"
+	
+	# Debug: show file size and first bytes
+	echo "  Downloaded file size: $(wc -c < "$filename") bytes" >&2
+	echo "  First bytes (hex): $(head -c 8 "$filename" | xxd -p)" >&2
 }
 
 install_version() {
