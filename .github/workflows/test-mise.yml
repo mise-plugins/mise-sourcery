@@ -1,4 +1,4 @@
-name: test mise
+name: mise
 
 on:
   pull_request:
