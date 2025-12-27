@@ -28,7 +28,7 @@ case "$platform" in
 		unzip "$release_file" -d "$ASDF_DOWNLOAD_PATH" || fail "Could not extract $release_file"
 		;;
 	ubuntu-22.04)
-		tar -xJf "$release_file" -C "$ASDF_DOWNLOAD_PATH" || fail "Could not extract $release_file"
+		tar -xf "$release_file" -C "$ASDF_DOWNLOAD_PATH" || fail "Could not extract $release_file"
 		;;
 esac
 
