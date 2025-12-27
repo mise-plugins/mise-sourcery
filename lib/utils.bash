@@ -76,23 +76,17 @@ get_ubuntu_asset_url() {
 	arch="$(uname -m)"
 	api_url="https://api.github.com/repos/krzysztofzablocki/Sourcery/releases/tags/${version}"
 
-	echo "Fetching release info for version $version (arch: $arch)..." >&2
-
-	# Fetch API response (without -f to see errors)
 	api_response=$(curl -sL "$api_url" 2>&1)
 
-	# Extract the asset URL
 	asset_url=$(echo "$api_response" | \
 		grep -o '"browser_download_url": *"[^"]*ubuntu[^"]*22\.04[^"]*'"${arch}"'[^"]*\.tar\.xz"' | \
 		head -1 | \
 		sed 's/"browser_download_url": *"\([^"]*\)"/\1/')
 
 	if [ -z "$asset_url" ]; then
-		echo "API response (first 500 chars): ${api_response:0:500}" >&2
 		fail "Could not find Ubuntu 22.04 $arch asset for version $version"
 	fi
 
-	echo "Found asset URL: $asset_url" >&2
 	echo "$asset_url"
 }
 
@@ -112,12 +106,7 @@ download_release() {
 	esac
 
 	echo "* Downloading $TOOL_NAME release $version..."
-	echo "  URL: $url" >&2
 	curl -fsSL -o "$filename" "$url" || fail "Could not download $url"
-	
-	# Debug: show file size and first bytes
-	echo "  Downloaded file size: $(wc -c < "$filename") bytes" >&2
-	echo "  First bytes (hex): $(head -c 8 "$filename" | xxd -p)" >&2
 }
 
 install_version() {
