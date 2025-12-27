@@ -1,8 +1,10 @@
 name: mise
 
 on:
-  pull_request:
   push:
+    branches:
+      - master
+  pull_request:
   schedule:
     - cron: 0 0 * * 5
 
